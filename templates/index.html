@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Breach-A-Mail Checker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --blue: #0077cc;
+            --blue-dark: #005fa3;
+            --burgundy: #800020;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f8fb;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--burgundy);
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px #ccc;
+        }
+
+        input[type="email"] {
+            padding: 10px;
+            width: 80%;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--blue-dark);
+        }
+
+        .result {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .breach-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+        }
+
+        .breach-card:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .breach-toggle {
+            background: linear-gradient(to right, var(--burgundy), var(--blue-dark));
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .breach-toggle:hover {
+            background: linear-gradient(to right, #a32240, #004080);
+        }
+
+        .breach-content {
+            padding: 15px 20px;
+            display: block;
+        }
+
+        .breach-content.hidden {
+            display: none;
+        }
+
+        .copy-btn {
+            background-color: var(--blue-dark);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            float: right;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--blue);
+        }
+
+        .breach-icon {
+            margin-right: 10px;
+            font-size: 1.3rem;
+        }
+
+        .low { color: green; }
+        .medium { color: orange; }
+        .high { color: red; }
+
+        .no-breach {
+            color: green;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .chatbot-section {
+            margin-top: 50px;
+            border-top: 3px solid var(--blue);
+            padding-top: 20px;
+        }
+
+        iframe.chatbot-frame {
+            width: 100%;
+            height: 500px;
+            border: 4px solid var(--burgundy);
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Breach-A-Mail Checker</h1>
+        <p>Enter your email below to check if it's been involved in a data breach.</p>
+
+        <form action="/check" method="POST">
+            <input type="email" name="email" placeholder="Enter your email" required>
+            <br>
+            <button class="btn" type="submit">Check Breach</button>
+        </form>
+
+        <div class="result">
+            {% if breaches %}
+                <h3>🔐 Breach Results for {{ email }}:</h3>
+                {% for breach in breaches %}
+                    {% set severity = "low" if breach.PwnCount < 100000 else "medium" if breach.PwnCount < 1000000 else "high" %}
+                    <div class="breach-card">
+                        <div class="breach-toggle">
+                            <span>
+                                <span class="breach-icon {{ severity }}">&#9888;</span> 
+                                {{ breach.Name }} <small>({{ breach.BreachDate }})</small>
+                            </span>
+                            <span>▼</span>
+                        </div>
+                        <div class="breach-content hidden" id="breach-content-{{ loop.index }}">
+                            <p><strong>Domain:</strong> {{ breach.Domain }}</p>
+                            <p><strong>Pwn Count:</strong> {{ "{:,}".format(breach.PwnCount) }}</p>
+                            <p><strong>Description:</strong> {{ breach.Description | safe }}</p>
+                            <p><strong>Data Compromised:</strong> {{ breach.DataClasses | join(', ') }}</p>
+                            <button class="copy-btn" onclick="copyBreach({{ loop.index }})">📋 Copy Info</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% elif message %}
+                <p class="no-breach">{{ message }}</p>
+            {% elif error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+        </div>
+
+        <div class="chatbot-section">
+            <p style="color: #333; font-style: italic;">🤖 Chatbot is ready to assist you with post-breach tips below.</p>
+            <h3 style="color: var(--blue-dark);">Need help or have questions?</h3>
+            <iframe
+                src="https://www.chatbase.co/chatbot-iframe/uRaihnESjLY8Laxg4IFK5"
+                class="chatbot-frame"
+                frameborder="0">
+            </iframe>
+        </div>
+    </div>
+
+    <script>
+        // Toggle breach card content
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.breach-toggle').forEach(toggle => {
+                toggle.addEventListener('click', function () {
+                    const content = this.nextElementSibling;
+                    content.classList.toggle('hidden');
+                    this.classList.toggle('expanded');
+                });
+            });
+        });
+
+        // Copy button functionality
+        function copyBreach(id) {
+            const content = document.getElementById(`breach-content-${id}`);
+            navigator.clipboard.writeText(content.innerText).then(() => {
+                alert("📋 Breach details copied to clipboard!");
+            });
+        }
+    </script>
+</body>
+</html>
