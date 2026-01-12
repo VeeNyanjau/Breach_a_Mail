@@ -5,66 +5,93 @@
     <title>Breach-A-Mail Checker</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Bootswatch Quartz theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css">
 
     <style>
         :root {
-            --blue: #030303;
-            --blue-dark: #005fa3;
-            --burgundy: #23b37c;
+            --primary-bg: #0f172a; /* dark blue background */
+            --primary-text: #e0e7ff; /* light blue text */
+            --accent: #3b82f6; /* bright blue */
+            --accent2: #60a5fa; /* lighter blue */
+            --danger: #ef4444; /* red */
+            --card-bg: #1e40af; /* darker blue */
+            --input-bg: #1e40af; /* darker blue */
+            --input-border: #60a5fa; /* lighter blue */
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f8fb;
+            font-family: 'Fira Mono', 'Consolas', monospace;
+            background-image: url('Circuit board motherboard_ blue technology background _ Premium Vector.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            color: var(--primary-text);
             padding: 40px;
             text-align: center;
         }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.7); /* dark blue overlay */
+            z-index: -1;
+        }
 
         .container {
-            max-width: 750px;
+            max-width: 1200px; /* Increased max-width for grid */
             margin: auto;
-            background: white;
+            background: rgba(15, 23, 42, 0.97); /* semi-transparent dark blue */
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(96, 165, 250, 0.08);
         }
 
         h1 {
-            color: var(--burgundy);
+            color: var(--accent2);
             font-size: 2.5rem;
             font-weight: bold;
             margin-bottom: 10px;
-            text-shadow: 1px 1px #ccc;
+            text-shadow: none;
         }
 
         #toggleDarkMode {
-            float: right;
             margin-bottom: 20px;
+            background: var(--accent2);
+            color: var(--primary-bg);
         }
 
         input[type="email"] {
             padding: 10px;
             width: 80%;
             margin-top: 20px;
-            border: 1px solid #ccc;
+            border: 1.5px solid var(--input-border);
             border-radius: 5px;
             font-size: 1rem;
+            background: var(--input-bg);
+            color: var(--primary-text);
+            box-shadow: none;
         }
 
         .btn {
             margin-top: 15px;
             padding: 10px 20px;
-            background-color: var(--blue);
-            color: white;
+            background-color: var(--accent);
+            color: var(--primary-text);
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 1rem;
-            transition: background-color 0.3s ease;
+            font-family: inherit;
+            font-weight: bold;
+            box-shadow: none;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .btn:hover {
-            background-color: var(--blue-dark);
+            background-color: var(--accent2);
+            color: var(--primary-bg);
         }
 
         .result {
@@ -73,22 +100,22 @@
         }
 
         .breach-card {
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid #ddd;
+            background: var(--primary-bg);
+            border: 1.5px solid var(--accent2);
             border-radius: 12px;
             margin-bottom: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 24px rgba(96, 165, 250, 0.08);
             overflow: hidden;
             transition: box-shadow 0.3s;
         }
 
         .breach-card:hover {
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 32px var(--accent2);
         }
 
         .breach-toggle {
-            background: linear-gradient(to right, var(--burgundy), var(--blue-dark));
-            color: white;
+            background: linear-gradient(to right, var(--accent2), var(--accent));
+            color: var(--primary-text);
             padding: 15px 20px;
             cursor: pointer;
             font-weight: bold;
@@ -98,15 +125,17 @@
             align-items: center;
             width: 100%;
             border: none;
+            text-shadow: none;
         }
 
         .breach-toggle:hover {
-            background: linear-gradient(to right, #a32240, #004080);
+            background: linear-gradient(to right, var(--accent), var(--accent2));
         }
 
         .breach-content {
             padding: 15px 20px;
             display: block;
+            color: var(--primary-text);
         }
 
         .breach-content.hidden {
@@ -114,8 +143,8 @@
         }
 
         .copy-btn {
-            background-color: var(--blue-dark);
-            color: white;
+            background-color: var(--accent2);
+            color: var(--primary-bg);
             border: none;
             padding: 6px 10px;
             border-radius: 5px;
@@ -123,10 +152,12 @@
             float: right;
             margin-top: 10px;
             cursor: pointer;
+            box-shadow: none;
         }
 
         .copy-btn:hover {
-            background-color: var(--blue);
+            background-color: var(--accent);
+            color: var(--primary-text);
         }
 
         .breach-icon {
@@ -134,69 +165,159 @@
             font-size: 1.4rem;
         }
 
-        .low { color: green; }
-        .medium { color: orange; }
-        .high { color: red; }
+        .low { color: #10b981; }
+        .medium { color: #f59e0b; }
+        .high { color: var(--danger); }
 
         .no-breach {
-            color: green;
+            color: var(--accent2);
             font-weight: bold;
             font-size: 1.1rem;
+            text-shadow: none;
         }
 
         .error {
-            color: red;
+            color: var(--danger);
             font-weight: bold;
         }
 
         .chatbot-section {
             margin-top: 50px;
-            border-top: 3px solid var(--blue);
+            border-top: 3px solid var(--accent2);
             padding-top: 20px;
         }
-
         iframe.chatbot-frame {
             width: 100%;
-            height: 500px;
-            border: 4px solid var(--burgundy);
+            height: 600px;
+            border: 4px solid var(--accent2);
             border-radius: 12px;
         }
 
         body.dark-mode {
-            background-color: #1c1c1c;
-            color: #eaeaea;
+            background-color: #0f172a;
+            color: #e0e7ff;
         }
 
         .dark-mode .container {
-            background-color: #2a2a2a;
-            color: #eaeaea;
+            background: rgba(15, 23, 42, 0.97);
+            color: #e0e7ff;
         }
 
-        .dark-mode .breach-card,
-        .dark-mode input,
-        .dark-mode .btn,
-        .dark-mode .copy-btn {
-            background-color: #333;
-            color: #f5f5f5;
-            border-color: #666;
+        .dark-mode .breach-card strong {
+            color: #e0e7ff !important;
+            font-weight: bold;
+        }
+        .dark-mode .breach-content {
+            color: #e0e7ff !important;
+        }
+        .dark-mode .breach-content .breach-label {
+            color: #e0e7ff !important;
+            font-weight: bold !important;
+        }
+        .dark-mode .breach-content .breach-value {
+            color: #e0e7ff !important;
+            font-weight: bold !important;
         }
 
         .dark-mode .btn:hover,
         .dark-mode .copy-btn:hover {
-            background-color: #444;
+            background-color: #1e40af;
         }
 
         .dark-mode .breach-toggle {
-            background: linear-gradient(to right, #333333, #1c1c1c);
+            background: linear-gradient(to right, #1e40af, #1e3a8a);
         }
 
         .dark-mode .breach-toggle:hover {
-            background: linear-gradient(to right, #444, #222);
+            background: linear-gradient(to right, #3b82f6, #1e40af);
         }
 
         .dark-mode .chatbot-frame {
-            border-color: #444;
+            border-color: #1e40af;
         }
+        /* Remove overlay spinner styles */
+        #spinnerOverlay, #spinnerOverlay.active { display: none !important; }
+        /* Spinner */
+        .spinner {
+            border: 8px solid #1e40af;
+            border-top: 8px solid var(--accent);
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            box-shadow: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert-success {
+            background-color: #1e40af;
+            color: #e0e7ff;
+            border: 1px solid #60a5fa;
+        }
+
+        .alert-danger {
+            background-color: #991b1b;
+            color: #fecaca;
+            border: 1px solid #ef4444;
+        }
+
+        .breach-status-message {
+            margin-top: 15px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .breach-status-message.no-breach {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border-color: #10b981;
+        }
+
+        .breach-status-message.has-breach {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* New styles for dashboard layout */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two equal columns */
+            gap: 20px; /* Space between frames */
+            margin-top: 20px;
+            align-items: start;
+        }
+
+        .dashboard-frame {
+            background: rgba(15, 23, 42, 0.97); /* Semi-transparent dark blue */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(96, 165, 250, 0.08);
+        }
+
+        .left-frame {
+            grid-column: 1; /* Place on the left */
+        }
+
+        .right-frame {
+            grid-column: 2; /* Place on the right */
+        }
+        /* .dashboard-frame.right-frame {
+            height: 950px;
+        } */
     </style>
 </head>
 <body>
@@ -205,66 +326,250 @@
     <h1>Breach-A-Mail Checker</h1>
     <p>Enter your email below to check if it's been involved in a data breach.</p>
 
-    <form action="/check" method="POST">
-        <input type="email" name="email" placeholder="Enter your email" required>
-        <br>
-        <button class="btn" type="submit">Check Breach</button>
-    </form>
-
-    <div class="result">
-        {% if breaches %}
-            <h3>🔐 Breach Results for {{ email }}:</h3>
-            {% for breach in breaches %}
-                {% set severity = "low" if breach.PwnCount < 100000 else "medium" if breach.PwnCount < 1000000 else "high" %}
-                <div class="breach-card">
-                    <button 
-                        class="breach-toggle" 
-                        aria-expanded="false" 
-                        aria-controls="breach-content-{{ loop.index }}" 
-                        aria-label="Toggle details for {{ breach.Name }}">
-                        <span style="display: flex; align-items: center;">
-                            {% if severity == "low" %}<span class="breach-icon low">🟢</span>
-                            {% elif severity == "medium" %}<span class="breach-icon medium">🟠</span>
-                            {% else %}<span class="breach-icon high">🔴</span>
-                            {% endif %}
-                            <img src="https://logo.clearbit.com/{{ breach.Domain }}" alt="{{ breach.Domain }}" onerror="this.style.display='none'" style="width: 32px; height: 32px; margin-right: 10px; border-radius: 5px;">
-                            <span><strong>{{ breach.Name }}</strong> <small>({{ breach.BreachDate }})</small></span>
-                        </span>
-                        <span>▼</span>
-                    </button>
-                    <div class="breach-content hidden" id="breach-content-{{ loop.index }}">
-                        <p><strong>Domain:</strong> {{ breach.Domain }}</p>
-                        <p><strong>Pwn Count:</strong> {{ "{:,}".format(breach.PwnCount) }}</p>
-                        <p><strong>Description:</strong> {{ breach.Description | safe }}</p>
-                        <p><strong>Data Compromised:</strong> {{ breach.DataClasses | join(', ') }}</p>
-                        <button class="copy-btn" onclick="copyBreach({{ loop.index }})">📋 Copy Info</button>
-                    </div>
-                </div>
-            {% endfor %}
-        {% elif message %}<p class="no-breach">{{ message }}</p>
-        {% elif error %}<p class="error">{{ error }}</p>
-        {% endif %}
-    </div>
-
-    {% if breaches %}
-    <div style="margin-top: 40px;">
-        <button class="btn" onclick="toggleChart()">📊 Toggle Breach Size Chart</button>
-        <div id="chartWrapper" style="margin-top: 20px; display: none;">
-            <h3 style="text-align: center;">📊 Breach Size Chart</h3>
-            <canvas id="breachChart" height="300"></canvas>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div>
+          {% for category, message in messages %}
+            {% if category == 'success' %}
+              <div class="alert alert-success" role="alert">{{ message }}</div>
+            {% endif %}
+          {% endfor %}
         </div>
-    </div>
-    {% endif %}
+      {% endif %}
+    {% endwith %}
 
-    <div class="chatbot-section">
-        <p style="color: #333; font-style: italic;"><h1>🤖 Chatbot is ready to assist you with post-breach tips below.</h1></p>
-        <h3 style="color: var(--blue-dark);">Need help or have questions?</h3>
-        <iframe src="https://www.chatbase.co/chatbot-iframe/uRaihnESjLY8Laxg4IFK5" class="chatbot-frame" frameborder="0"></iframe>
+    <!-- Dashboard Layout with Frames -->
+    <div class="dashboard-container">
+        <!-- Left Frame - Email Checker -->
+        <div class="dashboard-frame left-frame">
+            <h3 style="color: var(--accent2); margin-bottom: 20px;">🔍 Email Breach Checker</h3>
+            
+            <form action="/check" method="POST" id="breachForm">
+                <input type="email" name="email" placeholder="Enter your email" required>
+                <br>
+                <button class="btn" type="submit">Check Breach</button>
+            </form>
+
+            <!-- Breach Status Message -->
+            <div id="breachStatusMessage" class="breach-status-message" style="display: none;"></div>
+
+            <!-- Inline Spinner -->
+            <div id="spinnerInline" style="display:none; margin: 20px auto; text-align: center;">
+                <div class="spinner"></div>
+            </div>
+
+            <div class="result">
+                {% if breaches %}
+                    <h3>🔐 Breach Results for {{ email }}:</h3>
+                    {% for breach in breaches %}
+                        {% set severity = "low" if breach.PwnCount < 100000 else "medium" if breach.PwnCount < 1000000 else "high" %}
+                        <div class="breach-card">
+                            <button 
+                                class="breach-toggle" 
+                                aria-expanded="false" 
+                                aria-controls="breach-content-{{ loop.index }}" 
+                                aria-label="Toggle details for {{ breach.Name }}">
+                                <span style="display: flex; align-items: center;">
+                                    {% if severity == "low" %}<span class="breach-icon low">🟢</span>
+                                    {% elif severity == "medium" %}<span class="breach-icon medium">🟠</span>
+                                    {% else %}<span class="breach-icon high">🔴</span>
+                                    {% endif %}
+                                    <img src="https://logo.clearbit.com/{{ breach.Domain }}" alt="{{ breach.Domain }}" onerror="this.style.display='none'" style="width: 32px; height: 32px; margin-right: 10px; border-radius: 5px;">
+                                    <span><strong>{{ breach.Name }}</strong> <small>({{ breach.BreachDate }})</small></span>
+                                </span>
+                                <span>▼</span>
+                            </button>
+                            <div class="breach-content hidden" id="breach-content-{{ loop.index }}">
+                                <p><span class="breach-label">Domain:</span> <span class="breach-value">{{ breach.Domain }}</span></p>
+                                <p><span class="breach-label">Pwn Count:</span> <span class="breach-value">{{ '{:,}'.format(breach.PwnCount) }}</span></p>
+                                <p><span class="breach-label">Description:</span> <span class="breach-value">{{ breach.Description | safe }}</span></p>
+                                <p><span class="breach-label">Data Compromised:</span> <span class="breach-value">{{ breach.DataClasses | join(', ') }}</span></p>
+                                <button class="copy-btn" onclick="copyBreach({{ loop.index }})">📋 Copy Info</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            {% if breaches %}
+            <div style="margin-top: 40px;">
+                <button class="btn" onclick="toggleChart()">📊 Toggle Breach Size Chart</button>
+                <div id="chartWrapper" style="margin-top: 20px; display: none;">
+                    <h3 style="text-align: center;">📊 Breach Size Chart</h3>
+                    <canvas id="breachChart" height="300" style="width: 100%; height: 300px;"></canvas>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Frame - Chatbot & Latest Breaches -->
+        <div class="dashboard-frame right-frame">
+            <h3 style="color: var(--accent2); margin-bottom: 20px;">🤖 AI Assistant & Latest Breaches</h3>
+
+            <!-- Password Strength Checker -->
+            <div style="margin-bottom: 30px;">
+                <h4 style="color: var(--accent2); margin-bottom: 10px;">🔑 Password Strength & Breach Checker</h4>
+                <input type="password" id="passwordInput" placeholder="Enter a password to check" style="width: 100%; padding: 10px; border-radius: 5px; border: 1.5px solid var(--input-border); background: var(--input-bg); color: var(--primary-text);">
+                <div id="passwordStrengthMeter" style="height: 10px; width: 100%; background: #22223b; border-radius: 5px; margin: 10px 0;"></div>
+                <div id="passwordStrengthMsg" style="font-weight: bold;"></div>
+                <div id="passwordBreachMsg" style="font-weight: bold; margin-top: 8px;"></div>
+            </div>
+
+            <!-- Cyber Hygiene Score Indicator -->
+            <div id="cyberHygieneScoreContainer" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 30px;">
+                <svg id="cyberHygieneSVG" width="120" height="120" style="display: block;">
+                    <circle id="circle-outer" cx="60" cy="60" r="54" stroke="#bbb" stroke-width="10" fill="none" />
+                    <circle id="circle-middle" cx="60" cy="60" r="38" stroke="#bbb" stroke-width="10" fill="none" />
+                    <circle id="circle-inner" cx="60" cy="60" r="22" stroke="#bbb" stroke-width="10" fill="none" />
+                    <text id="cyberHygieneEmoji" x="60" y="68" text-anchor="middle" font-size="2.5rem" dominant-baseline="middle">😐</text>
+                </svg>
+                <div style="margin-top: 10px; font-size: 0.95rem; color: var(--accent2);">
+                    <span style="margin-right: 10px;">● Password</span>
+                    <span style="margin-right: 10px;">● Breach</span>
+                    <span>● Email</span>
+                </div>
+                <div id="cyberHygieneTips" style="margin-top: 10px; text-align: center; color: var(--primary-text);"></div>
+            </div>
+
+            <!-- Chatbot -->
+            <div style="margin-top: 0;">
+                <h4 style="color: var(--accent2); margin-bottom: 15px;">💬 Need help? Ask our AI assistant:</h4>
+                <iframe src="https://www.chatbase.co/chatbot-iframe/uRaihnESjLY8Laxg4IFK5" class="chatbot-frame" frameborder="0"></iframe>
+            </div>
+
+            <!-- Latest Breaches Section -->
+            <div style="margin: 20px 0;">
+                <button class="btn" onclick="showLatestBreaches()">📰 Show Latest Breaches</button>
+                <div id="latestBreachesSection" style="display: none; margin-top: 20px; text-align: left;">
+                    <h4 style="color: var(--accent2); text-align: center;">🔍 Latest Data Breaches</h4>
+                    <div id="latestBreachesList"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    // Function to handle breach lookup requests from chatbot
+    async function lookupBreach(breachName) {
+        try {
+            const response = await fetch('/breachinfo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ breach: breachName })
+            });
+            
+            const data = await response.json();
+            return data.reply;
+        } catch (error) {
+            console.error('Error fetching breach info:', error);
+            return "Sorry, I couldn't fetch breach information at the moment.";
+        }
+    }
+
+    // Function to fetch and display latest breaches
+    async function showLatestBreaches() {
+        console.log('showLatestBreaches function called');
+        const section = document.getElementById('latestBreachesSection');
+        const list = document.getElementById('latestBreachesList');
+        
+        if (section.style.display === 'none') {
+            section.style.display = 'block';
+            list.innerHTML = '<div class="spinner"></div><p>Loading latest breaches...</p>';
+            
+            try {
+                console.log('Fetching latest breaches...');
+                const response = await fetch('/latest-breaches');
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Received data:', data);
+                
+                if (data.latest_breaches && data.latest_breaches.length > 0) {
+                    let html = '';
+                    data.latest_breaches.forEach(breach => {
+                        html += `
+                            <div class="breach-card" style="margin: 10px 0;">
+                                <div class="breach-toggle" style="cursor: default;">
+                                    <span><strong>${breach.name}</strong> (${breach.date})</span>
+                                </div>
+                                <div class="breach-content">
+                                    <p><strong>Records affected:</strong> ${breach.pwn_count.toLocaleString()}</p>
+                                    <p><strong>Data exposed:</strong> ${breach.data_classes.join(', ')}</p>
+                                    <p><strong>Description:</strong> ${breach.description}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    list.innerHTML = html;
+                } else {
+                    list.innerHTML = '<p style="color: var(--danger);">No breach data available.</p>';
+                }
+            } catch (error) {
+                console.error('Error fetching latest breaches:', error);
+                list.innerHTML = `<p style="color: var(--danger);">Error loading latest breaches: ${error.message}</p>`;
+            }
+        } else {
+            section.style.display = 'none';
+        }
+    }
+
+    // Make the function available globally for chatbot integration
+    window.lookupBreach = lookupBreach;
+
+            document.addEventListener('DOMContentLoaded', () => {
+        // Show breach status message for existing results on page load
+        const breachCards = document.querySelectorAll('.result .breach-card');
+        const breachCount = breachCards.length;
+        const statusMessage = document.getElementById('breachStatusMessage');
+        
+        if (breachCount > 0) {
+            statusMessage.textContent = `⚠️ Oh no! Your account has been involved in ${breachCount} breach${breachCount > 1 ? 'es' : ''}.`;
+            statusMessage.className = 'breach-status-message has-breach';
+            statusMessage.style.display = 'block';
+            
+            // Update cyber hygiene score for email
+            if (breachCount < 3) hygiene.email = 'warn';
+            else hygiene.email = 'bad';
+        } else {
+            // Check if there's a "no breach" message or if we should set email as good
+            const noBreachMessage = document.querySelector('.no-breach');
+            if (noBreachMessage) {
+                hygiene.email = 'good';
+            } else {
+                // Check if this is a fresh page load (no email checked yet)
+                const emailInput = document.querySelector('input[type="email"]');
+                const resultSection = document.querySelector('.result');
+                
+                // Check if there's an email in the input or if we're on a results page
+                if (emailInput && emailInput.value) {
+                    // Email was checked but no breaches found - show good news message
+                    statusMessage.textContent = '🎉 Good news! No breach found for this email';
+                    statusMessage.className = 'breach-status-message no-breach';
+                    statusMessage.style.display = 'block';
+                    hygiene.email = 'good';
+                } else if (resultSection && resultSection.innerHTML.trim() === '') {
+                    // Result section is empty but we're on a results page - no breaches found
+                    statusMessage.textContent = '🎉 Good news! No breach found for this email';
+                    statusMessage.className = 'breach-status-message no-breach';
+                    statusMessage.style.display = 'block';
+                    hygiene.email = 'good';
+                } else {
+                    // If no breach cards and no email checked, set as neutral
+                    hygiene.email = null;
+                }
+            }
+        }
+        
+        // Update cyber hygiene display
+        updateCyberHygieneScore();
+        
         document.querySelectorAll('.breach-toggle').forEach(toggle => {
             toggle.addEventListener('click', function () {
                 const content = this.nextElementSibling;
@@ -282,6 +587,23 @@
             document.body.classList.toggle("dark-mode");
             localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
         });
+
+        // Inline spinner logic
+        const form = document.getElementById('breachForm');
+        const spinnerInline = document.getElementById('spinnerInline');
+        if (form && spinnerInline) {
+            form.addEventListener('submit', function() {
+                spinnerInline.style.display = 'block';
+                
+                // Hide any existing status message when submitting
+                const statusMessage = document.getElementById('breachStatusMessage');
+                if (statusMessage) {
+                    statusMessage.style.display = 'none';
+                }
+            });
+        }
+
+        // Remove password strength checker logic
     });
 
     function copyBreach(id) {
@@ -294,6 +616,121 @@
     function toggleChart() {
         const wrapper = document.getElementById('chartWrapper');
         wrapper.style.display = wrapper.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Password Strength & Breach Checker Logic
+    const passwordInput = document.getElementById('passwordInput');
+    const strengthMeter = document.getElementById('passwordStrengthMeter');
+    const strengthMsg = document.getElementById('passwordStrengthMsg');
+    const breachMsg = document.getElementById('passwordBreachMsg');
+    let breachTimeout = null;
+
+    // Cyber Hygiene Score Logic (Concentric Circles)
+    let hygiene = {
+        strength: null, // 'good', 'warn', 'bad'
+        breach: null,   // 'good', 'bad'
+        email: null     // 'good', 'warn', 'bad'
+    };
+
+    function updateCyberHygieneScore() {
+        // Set circle colors
+        document.getElementById('circle-inner').setAttribute('stroke',
+            hygiene.strength === 'good' ? '#10b981' : hygiene.strength === 'warn' ? '#f59e0b' : hygiene.strength === 'bad' ? '#ef4444' : '#bbb');
+        document.getElementById('circle-middle').setAttribute('stroke',
+            hygiene.breach === 'good' ? '#10b981' : hygiene.breach === 'bad' ? '#ef4444' : '#bbb');
+        document.getElementById('circle-outer').setAttribute('stroke',
+            hygiene.email === 'good' ? '#10b981' : hygiene.email === 'warn' ? '#f59e0b' : hygiene.email === 'bad' ? '#ef4444' : '#bbb');
+
+        // Emoji logic: worst status wins
+        let emoji = '😐';
+        if (hygiene.strength === 'bad' || hygiene.breach === 'bad' || hygiene.email === 'bad') emoji = '😟';
+        else if (hygiene.strength === 'warn' || hygiene.email === 'warn') emoji = '🙂';
+        else if (hygiene.strength === 'good' && hygiene.breach === 'good' && hygiene.email === 'good') emoji = '😃';
+        document.getElementById('cyberHygieneEmoji').textContent = emoji;
+
+        // Tips
+        let tips = [];
+        if (hygiene.strength === 'bad') tips.push('Use a longer password with numbers, uppercase, and symbols.');
+        if (hygiene.breach === 'bad') tips.push('Change your password! It has been found in breaches.');
+        if (hygiene.email === 'bad') tips.push('Your email is in many breaches. Change passwords and enable 2FA.');
+        if (hygiene.email === 'warn') tips.push('Some breaches found. Review your accounts.');
+        if (tips.length === 0) tips.push('Great job! Your cyber hygiene is strong.');
+        document.getElementById('cyberHygieneTips').textContent = tips.join(' ');
+    }
+
+    if (passwordInput) {
+        passwordInput.addEventListener('input', function() {
+            const val = passwordInput.value;
+            let score = 0;
+            let msg = '';
+            let color = '';
+            if (val.length >= 8) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[a-z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            switch(score) {
+                case 0:
+                case 1:
+                    msg = 'Very Weak'; color = '#ef4444'; break;
+                case 2:
+                    msg = 'Weak'; color = '#f59e0b'; break;
+                case 3:
+                    msg = 'Moderate'; color = '#fbbf24'; break;
+                case 4:
+                    msg = 'Strong'; color = '#10b981'; break;
+                case 5:
+                    msg = 'Very Strong'; color = '#3b82f6'; break;
+            }
+            strengthMeter.style.background = color;
+            strengthMeter.style.width = (score * 20) + '%';
+            strengthMsg.textContent = msg;
+            strengthMsg.style.color = color;
+
+            // Set hygiene.strength
+            if (score >= 4) hygiene.strength = 'good';
+            else if (score === 3) hygiene.strength = 'warn';
+            else hygiene.strength = 'bad';
+            updateCyberHygieneScore();
+
+            // Debounce breach check
+            if (breachTimeout) clearTimeout(breachTimeout);
+            breachMsg.textContent = '';
+            if (val.length > 0) {
+                breachTimeout = setTimeout(() => {
+                    breachMsg.textContent = 'Checking for breaches...';
+                    fetch('/check-password-breach', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ password: val })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.breached) {
+                            breachMsg.textContent = `⚠️ This password has appeared in ${data.count.toLocaleString()} breaches! Choose another.`;
+                            breachMsg.style.color = '#ef4444';
+                            hygiene.breach = 'bad';
+                        } else if (data.breached === false) {
+                            breachMsg.textContent = '✅ This password was not found in known breaches.';
+                            breachMsg.style.color = '#10b981';
+                            hygiene.breach = 'good';
+                        } else {
+                            breachMsg.textContent = 'Could not check breach status.';
+                            breachMsg.style.color = '#f59e0b';
+                            hygiene.breach = null;
+                        }
+                        updateCyberHygieneScore();
+                    })
+                    .catch(() => {
+                        breachMsg.textContent = 'Could not check breach status.';
+                        breachMsg.style.color = '#f59e0b';
+                        hygiene.breach = null;
+                        updateCyberHygieneScore();
+                    });
+                }, 600);
+            }
+        });
     }
 </script>
 
@@ -337,5 +774,6 @@
     });
 </script>
 {% endif %}
+
 </body>
 </html>
